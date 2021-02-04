@@ -1,0 +1,19 @@
+{
+  "name": "dunay128-statistic",
+  "version": "1.0.0",
+  "description": "Application gets info from Dunay-PRO Firebird DB when devices Dunay-128 were connected for the first time",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "nodemon --exec electron ."
+  },
+  "author": "Yurii Litovinskyi",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^11.2.2",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "node-firebird": "^0.9.9"
+  }
+}

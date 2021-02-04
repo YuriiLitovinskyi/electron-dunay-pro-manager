@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">  
+    <!-- <link rel="stylesheet" href="../assets/font/Comfortaa/Comfortaa-VariableFont_wght.ttf"> -->
+    <link rel="stylesheet" href="css/all.css">  
+    <link rel="stylesheet" href="css/style.css">  
+</head>
+<body>
+    <div class="container">
+        <h1>Dunay-128 Connection Statistics</h1>
+
+        <form class="connection-form" id="connection-form">
+            <h3>Options</h3>
+            <div class="form-conn-data">
+                <label for="host">Host</label>
+                <input type="text" id="host" placeholder="Enter Host" value="127.0.0.1" required>
+            </div>
+            <div class="form-conn-data">
+                <label for="port">Port</label>
+                <input type="number" id="port" placeholder="Enter Port" value="3050" min="1" max="65535" required>
+            </div>
+            <div class="form-conn-data">
+                <label for="databaseName">Database</label>
+                <input type="text" id="databaseName" placeholder="Enter Database Name" value="Danube" required>
+            </div>
+            <div class="form-conn-data">
+                <label for="username">User Name</label>
+                <input type="text" id="username" placeholder="Enter Database User Name" value="SYSDBA" required>
+            </div>
+            <div class="form-conn-data">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter Password" value="idonotcare" required>
+            </div>
+            <button>Connect to Database</button>
+        </form>
+        <button>Disconnect from Database</button>
+
+
+        <form class="select-date-form">
+            <label for="beginDate">Select begin date</label>
+            <input type="datetime-local" id="beginDate" required>
+            <label for="endDate">Select end date</label>
+            <input type="datetime-local" id="endDate" required>
+            <button>Apply</button>
+        </form>
+        
+        <div class="result">
+            <p id="dun128Number">Connected devices: 554</p>
+        </div>
+
+        <h3>Detailed Info</h3>
+        <label for="fileFormat">Choose format:</label>
+        <select name="fileFormat" id="fileFormat">
+            <option selected value="excel">excel</option>
+            <option value="html">html</option>
+            <option value="txt">txt</option>
+        </select>
+        <button>Export</button>
+
+
+        
+        <!-- <i class="fas fa-database"></i> -->
+
+        <script src="../js/renderer.js"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comfortaa', cursive;
+    background: #D3D3D3;
+}
+
+.about-container {
+    margin: 0;
+    /* background: #333; */
+}
