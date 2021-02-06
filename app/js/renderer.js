@@ -14,8 +14,14 @@ const connectionButton = document.getElementById('connectionButton');
 const applyDatesForm = document.getElementById('apply-dates-form');
 const beginDate = document.getElementById('beginDate');
 const endDate = document.getElementById('endDate');
+const dun128Amount = document.getElementById('dun128Amount');
 
 disconnectFromDb.disabled = true;
+
+ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {
+    console.log(resultPpkData);
+    dun128Amount.innerText = resultPpkData.length;
+});
 
 // Event Listeners
 connectDbForm.addEventListener('submit', (e) => {

@@ -110,7 +110,7 @@ function disconnectFromDb(db){
     db.detach();
 };
 
-function fidnDevicesAccordingToDates(db, dates){
+function findDevicesAccordingToDates(db, dates){
     if(db){
         //console.log(convertDate(dates.beginDate));
         //console.log(convertDate(dates.endDate));
@@ -119,8 +119,30 @@ function fidnDevicesAccordingToDates(db, dates){
         db.query(findPpkIds, (err, result) => {
             if(err) throw err;
             console.log('result: ', result);
-            // loop, get ids and insert in query
-            //const findPpkData = `SELECT OID, NAME, DESCRIPTION FROM objects WHERE ID IN (11210, 11884);`;
+            // const amountOfPpks = result.length;
+
+            let queryStringPpksIds = '';           
+
+            for(let i = 0; i < result.length; i++){
+                queryStringPpksIds += result[i].OBJECT + ', ';
+            };
+            queryStringPpksIds = queryStringPpksIds.replace(/,\s*$/, "");  // remove last comma and whitespace            
+                 
+            const findPpkData = `SELECT ID, OID, NAME FROM objects WHERE ID IN (${queryStringPpksIds});`;    //, DESCRIPTION        
+            
+            db.query(findPpkData, (err, resultPpkData) => {
+                if(err) throw err;                
+
+                for(let i = 0; i < resultPpkData.length; i++){
+                    for(let j = i; j < result.length; j++){
+                        if(resultPpkData[i].ID === result[j].OBJECT){
+                            resultPpkData[i].timeFirstRestarted = result[j].EVENT_TIMESTAMP;
+                        }
+                    }
+                }
+                console.log('resultPpkData', resultPpkData);
+                mainWindow.webContents.send('app:resultPpkData',  resultPpkData);
+            });
         });
     };
 };
@@ -146,5 +168,5 @@ ipcMain.on('app:disconnectFromDb', (e) => {
 
 ipcMain.on('app:findDevices', (e, dates) => {
     console.log(dates);
-    fidnDevicesAccordingToDates(connectedDb, dates);
+    findDevicesAccordingToDates(connectedDb, dates);
 });
