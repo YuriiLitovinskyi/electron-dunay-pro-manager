@@ -111,24 +111,22 @@ function disconnectFromDb(db){
 };
 
 function findDevicesAccordingToDates(db, dates){
-    if(db){
-        //console.log(convertDate(dates.beginDate));
-        //console.log(convertDate(dates.endDate));
+    if(db){       
         const findPpkIds = `SELECT OBJECT, EVENT_TIMESTAMP FROM (SELECT OBJECT, min(EVENT_TIMESTAMP) AS EVENT_TIMESTAMP FROM events WHERE EVENT_CLASS = 58 GROUP BY OBJECT) WHERE EVENT_TIMESTAMP between '${convertDate(dates.beginDate)}' AND '${convertDate(dates.endDate)}';`;  //between '27.03.2017 10:38' AND '27.03.2020 11:50';
         
         db.query(findPpkIds, (err, result) => {
             if(err) throw err;
-            console.log('result: ', result);
-            // const amountOfPpks = result.length;
+            console.log('result: ', result);        
 
             let queryStringPpksIds = '';           
 
             for(let i = 0; i < result.length; i++){
-                queryStringPpksIds += result[i].OBJECT + ', ';
+                result[i].EVENT_TIMESTAMP = convertDate(result[i].EVENT_TIMESTAMP)  // convert date
+                queryStringPpksIds += result[i].OBJECT + ', '; // build ids string
             };
             queryStringPpksIds = queryStringPpksIds.replace(/,\s*$/, "");  // remove last comma and whitespace            
                  
-            const findPpkData = `SELECT ID, OID, NAME FROM objects WHERE ID IN (${queryStringPpksIds});`;    //, DESCRIPTION        
+            const findPpkData = `SELECT ID, OID AS PPK_NUMBER, NAME AS PPK_NAME FROM objects WHERE ID IN (${queryStringPpksIds});`;    //, DESCRIPTION   blob?     
             
             db.query(findPpkData, (err, resultPpkData) => {
                 if(err) throw err;                
@@ -136,8 +134,8 @@ function findDevicesAccordingToDates(db, dates){
                 for(let i = 0; i < resultPpkData.length; i++){
                     for(let j = i; j < result.length; j++){
                         if(resultPpkData[i].ID === result[j].OBJECT){
-                            resultPpkData[i].timeFirstRestarted = result[j].EVENT_TIMESTAMP;
-                        }
+                            resultPpkData[i].FIRST_RESTART_TIME = result[j].EVENT_TIMESTAMP;
+                        }                      
                     }
                 }
                 console.log('resultPpkData', resultPpkData);

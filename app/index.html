@@ -51,15 +51,16 @@
             <p>Connected devices: <span id="dun128Amount"></span></p>
         </div>
 
-        <h3>Detailed Info</h3>
-        <label for="fileFormat">Choose format:</label>
-        <select name="fileFormat" id="fileFormat">
-            <option selected value="excel">excel</option>
-            <option value="html">html</option>
-            <option value="txt">txt</option>
-        </select>
-        <button>Export</button>
+        <h3>Detailed Info</h3>      
+        <button id="exportDataToExcel">Export to Excel</button>
+    
 
+        <!-- <input type="file" nwsaveas />
+        <input type="file" webkitdirectory /> -->
+
+        <input id="fileDialog" type="file">
+
+        <button onclick="saveFile()">SAVE AS</button>
 
         
         <!-- <i class="fas fa-database"></i> -->

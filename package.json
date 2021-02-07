@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "moment": "^2.29.1",
+    "nested-json-to-table": "^1.0.8",
     "node-firebird": "^0.9.9"
   }
 }
