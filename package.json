@@ -1,7 +1,7 @@
 {
   "name": "dunay128-statistic",
   "version": "1.0.0",
-  "description": "Application gets info from Dunay-PRO Firebird DB when devices Dunay-128 were connected for the first time",
+  "description": "Application gets info from Dunay-PRO Firebird DB when devices Dunay-128 restarted for the first time",
   "main": "main.js",
   "scripts": {
     "start": "electron .",

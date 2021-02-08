@@ -12,57 +12,53 @@
     <div class="container">
         <h1>Dunay-128 Connection Statistics</h1>
 
-        <form class="connection-form" id="connection-form">
-            <h3>Options</h3>
-            <div class="form-conn-data">
-                <label for="host">Host</label>
-                <input type="text" id="host" placeholder="Enter Host" value="194.187.110.62" required>
-            </div>
-            <div class="form-conn-data">
-                <label for="port">Port</label>
-                <input type="number" id="port" placeholder="Enter Port" value="3050" min="1" max="65535" required>
-            </div>
-            <div class="form-conn-data">
-                <label for="databaseName">Database</label>
-                <input type="text" id="databaseName" placeholder="Enter Database Name" value="Danube" required>
-            </div>
-            <div class="form-conn-data">
-                <label for="username">User Name</label>
-                <input type="text" id="username" placeholder="Enter Database User Name" value="SYSDBA" required>
-            </div>
-            <div class="form-conn-data">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter Password" value="idonotcare" required>
-            </div>
-            <button id="connectionButton">Connect to Database</button>
-        </form>
-        <button id="disconnectFromDb">Disconnect from Database</button>
-
-
-        <form class="select-date-form" id="apply-dates-form">
-            <label for="beginDate">Select begin date</label>
-            <input type="datetime-local" id="beginDate" required>
-            <label for="endDate">Select end date</label>
-            <input type="datetime-local" id="endDate" required>
-            <button id="applyDatesBtn">Apply</button>
-        </form>
-        
-        <div class="result">
-            <p>Connected devices: <span id="dun128Amount"></span></p>
+        <div id="connectionWindow">
+            <form class="connection-form" id="connection-form">
+                <h3>Options</h3>
+                <div class="form-conn-data">
+                    <label for="host">Host</label>
+                    <input type="text" id="host" placeholder="Enter Host" value="127.0.0.1" required>
+                </div>
+                <div class="form-conn-data">
+                    <label for="port">Port</label>
+                    <input type="number" id="port" placeholder="Enter Port" value="3050" min="1" max="65535" required>
+                </div>
+                <div class="form-conn-data">
+                    <label for="databaseName">Database</label>
+                    <input type="text" id="databaseName" placeholder="Enter Database Name" value="Danube" required>
+                </div>
+                <div class="form-conn-data">
+                    <label for="username">User Name</label>
+                    <input type="text" id="username" placeholder="Enter Database User Name" value="SYSDBA" required>
+                </div>
+                <div class="form-conn-data">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter Password" value="idonotcare" required>
+                </div>
+                <button id="connectionButton">Connect to Database</button>
+            </form>
         </div>
-
-        <h3>Detailed Info</h3>      
-        <button id="exportDataToExcel">Export to Excel</button>
-    
-
-        <!-- <input type="file" nwsaveas />
-        <input type="file" webkitdirectory /> -->
-
-        <input id="fileDialog" type="file">
-
-        <button onclick="saveFile()">SAVE AS</button>
-
         
+        <div id="ppkDataWindow">
+            <p>Disconnecting from DB automatically in: <span id="disconnectionTimerSpan"></span> seconds</p>
+            <button id="disconnectFromDb">Disconnect from Database</button>    
+    
+            <form class="select-date-form" id="apply-dates-form">
+                <label for="beginDate">Select begin date</label>
+                <input type="datetime-local" id="beginDate" required>
+                <label for="endDate">Select end date</label>
+                <input type="datetime-local" id="endDate" required>
+                <button id="applyDatesBtn">Apply</button>
+            </form>
+            
+            <div class="result">
+                <p>Connected devices: <span id="dun128Amount"></span></p>
+            </div>
+    
+            <h3>Detailed Info</h3>      
+            <button id="exportDataToExcel">Export to Excel</button>
+        </div>
+            
         <!-- <i class="fas fa-database"></i> -->
 
         <script src="js/renderer.js"></script>
