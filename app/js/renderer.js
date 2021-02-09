@@ -1,6 +1,3 @@
-// const path = require('path');
-// const os = require('os');
-const fs = require('fs');
 const { ipcRenderer } = require('electron');
 const { jsonToExcel } = require('nested-json-to-table');
 
@@ -16,7 +13,6 @@ const username = document.getElementById('username');
 const password = document.getElementById('password');
 const disconnectFromDb = document.getElementById('disconnectFromDb');
 const connectionButton = document.getElementById('connectionButton');
-//const applyDatesBtn = document.getElementById('applyDatesBtn');
 const applyDatesForm = document.getElementById('apply-dates-form');
 const beginDate = document.getElementById('beginDate');
 const endDate = document.getElementById('endDate');
@@ -38,8 +34,7 @@ let timer;
 let timeleft = 0;
 let timerInterf = 0;
 
-ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {
-    console.log(resultPpkData);
+ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {   
     data = [...resultPpkData];
     dun128Amount.innerText = resultPpkData.length;
     if(resultPpkData.length > 0){        
@@ -55,6 +50,15 @@ function setInputDate(month = 0){
     return now.toISOString().slice(0,16);
 };
 
+function exportFile(content, dates){
+    const element = document.createElement('a');
+    const file = new Blob([content], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = `Statistics_from_${dates.beginDate}_to_${dates.endDate}.xlsx`;
+    element.click();    
+};
+
+
 // Event Listeners
 connectDbForm.addEventListener('submit', (e) => {
     e.preventDefault();   
@@ -67,8 +71,7 @@ connectDbForm.addEventListener('submit', (e) => {
         password: password.value
     });
 
-    ipcRenderer.on('app:dbConnectionStatus', (e, data) => {
-        //console.log(data.disconnectionTimer);
+    ipcRenderer.on('app:dbConnectionStatus', (e, data) => {     
         disconnectionTimer = data.disconnectionTimer;
 
         if(data.connection === 'OK'){
@@ -77,7 +80,6 @@ connectDbForm.addEventListener('submit', (e) => {
             connectionWindow.style.display = 'none';
             ppkDataWindow.style.display = 'block';
 
-            //setInterval(setTime, 1000); 
             if(timer){
                 clearInterval(timer);
             }
@@ -103,7 +105,7 @@ connectDbForm.addEventListener('submit', (e) => {
                 exportDataToExcel.disabled = true;
             }, disconnectionTimer * 1000);
         }
-    })
+    });
 });
 
 disconnectFromDb.addEventListener('click', () => {
@@ -117,12 +119,11 @@ disconnectFromDb.addEventListener('click', () => {
     data = [];
     exportDataToExcel.disabled = true;
 
-    // if(timer){
-        clearInterval(timer);
-        clearTimeout(timerInterf);
-        timeleft = 0;
-        disconnectionTimerSpan.innerHTML = '';
-    // }
+    clearInterval(timer);
+    clearTimeout(timerInterf);
+    timeleft = 0;
+    disconnectionTimerSpan.innerHTML = '';
+  
 });
 
 applyDatesForm.addEventListener('submit', (e) => {
@@ -138,25 +139,14 @@ applyDatesForm.addEventListener('submit', (e) => {
 });
 
 exportDataToExcel.addEventListener('click', () => {
-    //console.log('data global', data);
-
-    if(data.length === 0){
-        console.error('Cannot create a file, data is empty. Choose another range of dates and press Apply button!');  
-        throw new Error('Cannot create a file, data is empty. Choose another range of dates and press Apply button!');
+    if(data.length === 0){        
+        throw new Error('Cannot create a file with empty data. Choose another range of dates and press Apply button!');
     } else {    
-        const tableExcel = jsonToExcel(data);       
-
-        // fs.writeFile('Statistics.xlsx', tableExcel, 'utf8', (err) => {
-        //     if(err) throw err;
-        //     console.log(`Exporting excel file to: ${__dirname}`);
-        // });   
-        
-        const content = tableExcel;
-        const element = document.createElement("a");
-        const file = new Blob([content], {type: "text/plain"});
-        element.href = URL.createObjectURL(file);
-        element.download = "Statistics.xlsx";
-        element.click();
-        console.log('Created and exported excel file');
-    }
+        const tableExcel = jsonToExcel(data);
+        const dates = {
+            beginDate: beginDate.value,
+            endDate: endDate.value
+        };
+        exportFile(tableExcel, dates);
+    };
 });

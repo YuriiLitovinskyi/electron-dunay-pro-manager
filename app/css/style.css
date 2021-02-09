@@ -1,13 +1,124 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap'); */
+
+@font-face {
+    font-family: 'Nunito';    
+    src: url('font/Nunito-Regular.ttf') format('truetype');
+}
+
 *{
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Comfortaa', cursive;
+    padding-top: 10px;
+    font-family: 'Nunito', sans-serif;
     background: #D3D3D3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: #525252;
+}
+
+h2 {
+    text-align: center;
+    margin: 10px 0;
+}
+
+h3 {
+    text-align: center;
+}
+
+.connection-form {
+    padding: 0 30px;  
+}
+
+.form-conn-data {
+    padding-bottom: 5px;
+}
+
+input, select, button{
+    font-family:inherit;
+}
+
+.form-conn-data label {
+    color: #777;
+    display: block;
+}
+
+.form-conn-data input {
+    border: 2px solid #f0f0f0;
+    border-radius: 5px;
+    display: block;
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    color: #777;
+    font-weight: bold;
+}
+
+.form-conn-data input:focus {
+    color: #000;
+}
+
+.select-date-form {
+    margin-top: 40px;
+}
+
+button {
+    cursor: pointer;
+    background-color: #3498db;
+    border: 2px solid #3498db;
+    border-radius: 4px;
+    color: #fff;
+    display: block;
+    font-size: 16px;
+    padding: 8px;
+    width: 100%; 
+    margin: 10px 0;
+}
+
+button:disabled,
+button[disabled]{
+  border: 2px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
+button:focus {
+    outline: 0;
+}
+
+button:hover {
+    background-color: #348adb;
+    border-color: #348adb;
+    transform: scale(1.01);
+}
+
+button:disabled:hover,
+button[disabled]:hover{
+  background-color: #cccccc;
+  border-color: #999999;
+  transform: scale(1);
+  cursor: default;
+}
+
+#disconnectFromDb {
+    background-color: #db6148;
+    border-color: #db6148;
 }
 
 .about-container {
-    margin: 0;
+    margin: 5px 10px;
     /* background: #333; */
+}
+
+#disconnectionTimerSpan {
+    color: #db6148;
+    font-weight: bold;
+}
+
+#dun128Amount {
+    color: #198049;
+    font-weight: bold;
 }

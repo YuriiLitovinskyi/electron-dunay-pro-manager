@@ -2,16 +2,15 @@ const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require('e
 const Firebird = require('node-firebird');
 const moment = require('moment');
 
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'production';
 
 const isDev = process.env.NODE_ENV !== 'production' ? true : false;
-
 
 let mainWindow;
 let aboutWindow;
 const appVersion = 'v1.0.0';
 let connectedDb;
-let disconnectionTimer = 60;
+let disconnectionTimer = 240;
 let timerDb = 0;
 
 function createMainWindow(){
@@ -22,7 +21,9 @@ function createMainWindow(){
         icon: './assets/icons/D_512x512.png',
         resizable: isDev ? true : false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            devTools: isDev ? true : false,
+            contextIsolation: false
         }
     });
 
@@ -36,8 +37,8 @@ function createMainWindow(){
 function createAboutWindow(){
     aboutWindow = new BrowserWindow({
         title: 'About this application',
-        width: 400,
-        height: 400,
+        width: 420,
+        height: 450,
         icon: './assets/icons/D_512x512.png',
         resizable: false,
         alwaysOnTop: true    
@@ -58,7 +59,7 @@ app.on('ready', () => {
 
     mainWindow.on('ready', () => {
         mainWindow = null;
-    })
+    });
 });
 
 app.on('before-quit', () => {
@@ -115,38 +116,23 @@ function disconnectFromDb(db){
 
 function findDevicesAccordingToDates(db, dates){
     if(db){       
-        const findPpkIds = `SELECT OBJECT, EVENT_TIMESTAMP FROM (SELECT OBJECT, min(EVENT_TIMESTAMP) AS EVENT_TIMESTAMP FROM events WHERE EVENT_CLASS = 58 GROUP BY OBJECT) WHERE EVENT_TIMESTAMP between '${convertDate(dates.beginDate)}' AND '${convertDate(dates.endDate)}';`;  //between '27.03.2017 10:38' AND '27.03.2020 11:50';
+        const findPpkIds = `SELECT OBJECT, EVENT_TIMESTAMP FROM (SELECT OBJECT, min(EVENT_TIMESTAMP) AS EVENT_TIMESTAMP FROM events WHERE EVENT_CLASS = 58 GROUP BY OBJECT) WHERE EVENT_TIMESTAMP between '${convertDate(dates.beginDate)}' AND '${convertDate(dates.endDate)}';`;
         
         db.query(findPpkIds, (err, result) => {
-            if(err) throw new Error(`Cannot execute query one! \n${err}`);
-            console.log('result: ', result);        
+            if(err) throw new Error(`Cannot execute query one! \n${err}`);                 
 
-            
-            
-            if(result.length === 0){
-                const options = {
-                    type: 'question',
-                    buttons: ['Ok'],
-                    defaultId: 1,
-                    title: 'Unsuccess',
-                    message: 'No devices found!',
-                    detail: 'Please try another range of dates!'                 
-                  };
-                
-                  dialog.showMessageBox(null, options, (response) => {
-                    console.log(response);                 
-                  });
-                //throw new Error('No devices found! Please try another range of dates!');
+            if(result.length === 0){              
+                  showDialogWindow('info', 'Unsuccess', 'No devices found!', 'Please try another range of dates!');   
             } else {
                 let queryStringPpksIds = '';           
 
                 for(let i = 0; i < result.length; i++){
-                    result[i].EVENT_TIMESTAMP = convertDate(result[i].EVENT_TIMESTAMP)  // convert date
+                    result[i].EVENT_TIMESTAMP = convertDate(result[i].EVENT_TIMESTAMP);  // convert date
                     queryStringPpksIds += result[i].OBJECT + ', '; // build ids string
                 };
                 queryStringPpksIds = queryStringPpksIds.replace(/,\s*$/, "");  // remove last comma and whitespace            
                     
-                const findPpkData = `SELECT ID, OID AS PPK_NUMBER, NAME AS PPK_NAME FROM objects WHERE ID IN (${queryStringPpksIds});`;    //, DESCRIPTION   blob?  
+                const findPpkData = `SELECT ID, OID AS PPK_NUMBER, NAME AS PPK_NAME FROM objects WHERE ID IN (${queryStringPpksIds});`; 
 
                 db.query(findPpkData, (err, resultPpkData) => {
                     if(err) throw new Error(`Cannot execute query two! \n${err}`);                
@@ -155,14 +141,12 @@ function findDevicesAccordingToDates(db, dates){
                         for(let j = i; j < result.length; j++){
                             if(resultPpkData[i].ID === result[j].OBJECT){
                                 resultPpkData[i].FIRST_RESTART_TIME = result[j].EVENT_TIMESTAMP;
-                            }                  
-                        }
-                    }
-                    console.log('resultPpkData', resultPpkData);
+                            };                
+                        };
+                    };                   
                     mainWindow.webContents.send('app:resultPpkData',  resultPpkData);
                 });
-            }
-            
+            };       
         });
     };
 };
@@ -170,15 +154,33 @@ function findDevicesAccordingToDates(db, dates){
 function convertDate(inputDate){   
     return moment(inputDate).format('DD.MM.YYYY HH:mm');
 };
-// process.on("uncaughtException", (err) => {
-//     const messageBoxOptions = {
-//          type: "error",
-//          title: "Error in Main process",
-//          message: "Something failed"
-//      };
-//      dialog.showMessageBox(messageBoxOptions);
-//      throw err;
-//  });
+
+process.on("uncaughtException", (err) => {
+    const messageBoxOptions = {
+         type: "error",
+         title: "An Error Occurred",
+         message: "Something failed",
+         detail: err.message
+     };
+     dialog.showMessageBox(messageBoxOptions);
+     //throw err;
+     console.log(err);
+ });
+
+function showDialogWindow(type, title, message, detail){
+    const options = {
+        type,
+        buttons: ['Ok'],
+        defaultId: 1,
+        title,
+        message,
+        detail                 
+    };
+    
+    dialog.showMessageBox(null, options, (response) => {
+    console.log(response);                 
+    });
+};
 
 ipcMain.on('errorInWindow', function(event, data){
     throw new Error(`Error in renderer! \n${data}`)
@@ -187,8 +189,7 @@ ipcMain.on('errorInWindow', function(event, data){
 ipcMain.on('app:connectToDb', (e, connectionOptions) => {
     connectionOptions.role = null;
     connectionOptions.lowercase_keys = false;
-    console.log(connectionOptions);
-
+   
     connectToDb(connectionOptions);
 });
 
@@ -199,7 +200,6 @@ ipcMain.on('app:disconnectFromDb', (e) => {
     };
 });
 
-ipcMain.on('app:findDevices', (e, dates) => {
-    console.log(dates);
+ipcMain.on('app:findDevices', (e, dates) => {  
     findDevicesAccordingToDates(connectedDb, dates);
 });
