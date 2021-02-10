@@ -5,3 +5,5 @@ npm i -D nodemon
 npm run dev
 npm i node-firebird
 npm i moment
+npm i electron-packager
+npm run package-win
