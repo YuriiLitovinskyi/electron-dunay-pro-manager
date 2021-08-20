@@ -20,6 +20,10 @@ body {
     color: #525252;
 }
 
+/* .container {
+    min-width: 150px !important;
+} */
+
 h2 {
     text-align: center;
     margin: 10px 0;

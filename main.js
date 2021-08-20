@@ -2,20 +2,20 @@ const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require('e
 const Firebird = require('node-firebird');
 const moment = require('moment');
 
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'dev';
 
 const isDev = process.env.NODE_ENV !== 'production' ? true : false;
 
 let mainWindow;
 let aboutWindow;
-const appVersion = 'v1.0.0';
+const appVersion = 'v1.0.1';
 let connectedDb;
 let disconnectionTimer = 240;
 let timerDb = 0;
 
 function createMainWindow(){
     mainWindow = new BrowserWindow({
-        title: `Dunay-128 Connection Statistics ${appVersion}`,
+        title: `Dunay-PRO Statistics ${appVersion}`,  //Dunay-128 Connection Statistics
         width: isDev ? 1000 : 600,
         height: 600,
         icon: './assets/icons/D_512x512.png',
@@ -151,6 +151,49 @@ function findDevicesAccordingToDates(db, dates){
     };
 };
 
+function findEmplStatistic(db){
+    return new Promise((resolve, reject) => {
+        if(db){
+            const findEmplStat = `
+            SELECT * FROM EMPLOYEE INNER JOIN
+                (SELECT EMPL_T.ID AS ID, 
+                        EMPL_T.OID AS OID, 
+                        EMPL_T.NAME AS EMPLOYEE_NAME, 
+                        EMPL_T.DESCRIPTION AS EMPLOYEE_DESCRIPTION, 
+                        STAFF_T.NAME AS STAFF_NAME, 
+                        STAFF_T.DESCRIPTION AS STAFF_DESCRIPTION, 
+                        PLACE_T.NAME AS PLACE_NAME, 
+                        PLACE_T.DESCRIPTION AS PLACE_DESCRIPTION, 
+                        OBJ_T.name AS OBJ_NAME, 
+                        OBJ_T.OID AS OBJ_NUMBER, 
+                        OBJ_T.DESCRIPTION AS OBJ_DESCRIPTION FROM
+                        (SELECT * FROM OBJECTS WHERE CLASS_NAME = 'EMPLOYEE') AS EMPL_T
+                INNER JOIN  objects as STAFF_T
+                    ON EMPL_T.PARENT_ID = STAFF_T.ID
+                INNER JOIN OBJECTS AS PLACE_T
+                    ON STAFF_T.PARENT_ID = PLACE_T.ID
+                INNER JOIN OBJECTS AS OBJ_T
+                    ON PLACE_T.PARENT_ID = OBJ_T.ID) AS OBJECTS
+            ON EMPLOYEE.ID = OBJECTS.ID ORDER BY OID ASC, OBJECTS.ID DESC;`
+        
+            //const test = `SELECT ADDRESS FROM EMPLOYEE WHERE ID = 13385`
+
+                
+            db.query(findEmplStat, (err, resultEmplStat) => {
+                if(err) throw new Error('Cannot execute query for employees statistic')
+
+                //console.log(resultEmplStat);
+
+                const res = JSON.parse(JSON.stringify(resultEmplStat))  // removes or sets to NULL all blob results of query execution, in this case: ADDRESS, STAFF_DESCRIPTION, PLACE_DESCRIPTION, OBJ_DESCRIPTION
+            
+                resolve(res)
+            })
+        } else {
+            reject('Error! could not connect to DB!')
+        }
+    })
+}
+
 function convertDate(inputDate){   
     return moment(inputDate).format('DD.MM.YYYY HH:mm');
 };
@@ -203,3 +246,8 @@ ipcMain.on('app:disconnectFromDb', (e) => {
 ipcMain.on('app:findDevices', (e, dates) => {  
     findDevicesAccordingToDates(connectedDb, dates);
 });
+
+ipcMain.handle('app:findEmployeesStatistic', async (e) => {
+    const res = await findEmplStatistic(connectedDb)
+    return res
+})

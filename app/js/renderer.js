@@ -22,6 +22,8 @@ const connectionWindow = document.getElementById('connectionWindow');
 const ppkDataWindow = document.getElementById('ppkDataWindow');
 const disconnectionTimerSpan = document.getElementById('disconnectionTimerSpan');
 
+const exportEmployeeDataToExcel = document.getElementById('exportEmployeeToExcel');
+
 disconnectFromDb.disabled = true;
 ppkDataWindow.style.display = 'none';
 exportDataToExcel.disabled = true;
@@ -29,6 +31,7 @@ beginDate.value = setInputDate(1);
 endDate.value = setInputDate();
 
 let data = [];
+//let emplData = [];
 let disconnectionTimer = 0;
 let timer;
 let timeleft = 0;
@@ -43,6 +46,12 @@ ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {
     };
 });
 
+// ipcRenderer.on('app:resultEmployeesStatistic', (e, resultEmployeesStatistic) => {
+//     console.log(resultEmployeesStatistic);
+
+//     emplData = [...resultEmployeesStatistic];
+// })
+
 function setInputDate(month = 0){
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -54,7 +63,11 @@ function exportFile(content, dates){
     const element = document.createElement('a');
     const file = new Blob([content], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = `Statistics_from_${dates.beginDate}_to_${dates.endDate}.xlsx`;
+    if(dates){
+        element.download = `Statistics_from_${dates.beginDate}_to_${dates.endDate}.xlsx`;
+    } else {
+        element.download = `Employees Statistics.xlsx`
+    }
     element.click();    
 };
 
@@ -150,3 +163,16 @@ exportDataToExcel.addEventListener('click', () => {
         exportFile(tableExcel, dates);
     };
 });
+
+exportEmployeeDataToExcel.addEventListener('click', async () => {
+  
+        console.log('Exporting Employees...');
+    
+        const emplData = await ipcRenderer.invoke('app:findEmployeesStatistic')
+        console.log(emplData);
+    
+        const tableEmplExcel = jsonToExcel(emplData)
+    
+        exportFile(tableEmplExcel, null)   
+
+})
