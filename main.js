@@ -154,13 +154,11 @@ function findDevicesAccordingToDates(db, dates){
 
 function findEmplStatistic(db){
     return new Promise((resolve, reject) => {
-        if(db){                          
-            db.query(findEmplStat, async (err, resultEmplStat) => {
-                if(err) throw new Error('Cannot execute query for employees statistic')
-                //console.log(resultEmplStat)        
-                const res = JSON.parse(JSON.stringify(resultEmplStat))  // removes or sets to NULL all BLOB(binary) results of query execution, in this case: ADDRESS, STAFF_DESCRIPTION, PLACE_DESCRIPTION, OBJ_DESCRIPTION            
-                resolve(res)   
-                //resolve(resultEmplStat)                
+        if(db){                                     
+            db.query(findEmplStat, (err, resultEmplStat) => {
+                if(err) throw new Error(`Cannot execute query for employees statistics! ${err.message}`)                      
+                const res = JSON.parse(JSON.stringify(resultEmplStat))  // removes or sets to NULL all BLOB(binary) results of query execution            
+                resolve(res)              
             })
         } else {
             reject('Error! Cannot connect to DB!')
