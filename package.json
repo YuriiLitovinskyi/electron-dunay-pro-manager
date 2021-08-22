@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "nodemon --exec electron .",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/icon.ico --asar --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"dunay128-connection-statistics\""    
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/icon.ico --asar --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"dunay128-connection-statistics\""
   },
   "author": "Yurii Litovinskyi",
   "license": "ISC",

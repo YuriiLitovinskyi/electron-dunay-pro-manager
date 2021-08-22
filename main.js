@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, globalShortcut, ipcMain, dialog } = require('electron');
 const Firebird = require('node-firebird');
 const moment = require('moment');
+const { findEmplStat } = require('./queries')
 
 process.env.NODE_ENV = 'dev';
 
@@ -153,43 +154,16 @@ function findDevicesAccordingToDates(db, dates){
 
 function findEmplStatistic(db){
     return new Promise((resolve, reject) => {
-        if(db){
-            const findEmplStat = `
-            SELECT * FROM EMPLOYEE INNER JOIN
-                (SELECT EMPL_T.ID AS ID, 
-                        EMPL_T.OID AS OID, 
-                        EMPL_T.NAME AS EMPLOYEE_NAME, 
-                        EMPL_T.DESCRIPTION AS EMPLOYEE_DESCRIPTION, 
-                        STAFF_T.NAME AS STAFF_NAME, 
-                        STAFF_T.DESCRIPTION AS STAFF_DESCRIPTION, 
-                        PLACE_T.NAME AS PLACE_NAME, 
-                        PLACE_T.DESCRIPTION AS PLACE_DESCRIPTION, 
-                        OBJ_T.name AS OBJ_NAME, 
-                        OBJ_T.OID AS OBJ_NUMBER, 
-                        OBJ_T.DESCRIPTION AS OBJ_DESCRIPTION FROM
-                        (SELECT * FROM OBJECTS WHERE CLASS_NAME = 'EMPLOYEE') AS EMPL_T
-                INNER JOIN  objects as STAFF_T
-                    ON EMPL_T.PARENT_ID = STAFF_T.ID
-                INNER JOIN OBJECTS AS PLACE_T
-                    ON STAFF_T.PARENT_ID = PLACE_T.ID
-                INNER JOIN OBJECTS AS OBJ_T
-                    ON PLACE_T.PARENT_ID = OBJ_T.ID) AS OBJECTS
-            ON EMPLOYEE.ID = OBJECTS.ID ORDER BY OID ASC, OBJECTS.ID DESC;`
-        
-            //const test = `SELECT ADDRESS FROM EMPLOYEE WHERE ID = 13385`
-
-                
-            db.query(findEmplStat, (err, resultEmplStat) => {
+        if(db){                          
+            db.query(findEmplStat, async (err, resultEmplStat) => {
                 if(err) throw new Error('Cannot execute query for employees statistic')
-
-                //console.log(resultEmplStat);
-
-                const res = JSON.parse(JSON.stringify(resultEmplStat))  // removes or sets to NULL all blob results of query execution, in this case: ADDRESS, STAFF_DESCRIPTION, PLACE_DESCRIPTION, OBJ_DESCRIPTION
-            
-                resolve(res)
+                //console.log(resultEmplStat)        
+                const res = JSON.parse(JSON.stringify(resultEmplStat))  // removes or sets to NULL all BLOB(binary) results of query execution, in this case: ADDRESS, STAFF_DESCRIPTION, PLACE_DESCRIPTION, OBJ_DESCRIPTION            
+                resolve(res)   
+                //resolve(resultEmplStat)                
             })
         } else {
-            reject('Error! could not connect to DB!')
+            reject('Error! Cannot connect to DB!')
         }
     })
 }

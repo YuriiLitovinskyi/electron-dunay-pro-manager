@@ -46,18 +46,21 @@ ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {
     };
 });
 
-// ipcRenderer.on('app:resultEmployeesStatistic', (e, resultEmployeesStatistic) => {
-//     console.log(resultEmployeesStatistic);
-
-//     emplData = [...resultEmployeesStatistic];
-// })
-
 function setInputDate(month = 0){
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     now.setMonth(now.getMonth() - month);
     return now.toISOString().slice(0,16);
 };
+
+function convertDate(date){
+    let dd = date.getDate()
+    let mm = date.getMonth() + 1
+    let yyyy = date.getFullYear()
+    dd < 10 ? dd = '0' + dd : dd
+    mm < 10 ? mm = '0' + mm : dd
+    return `${yyyy}-${mm}-${dd}`   
+}
 
 function exportFile(content, dates){
     const element = document.createElement('a');
@@ -66,11 +69,10 @@ function exportFile(content, dates){
     if(dates){
         element.download = `Statistics_from_${dates.beginDate}_to_${dates.endDate}.xlsx`;
     } else {
-        element.download = `Employees Statistics.xlsx`
+        element.download = `Employees Statistics_${convertDate(new Date())}.xlsx`
     }
     element.click();    
 };
-
 
 // Event Listeners
 connectDbForm.addEventListener('submit', (e) => {
@@ -164,15 +166,8 @@ exportDataToExcel.addEventListener('click', () => {
     };
 });
 
-exportEmployeeDataToExcel.addEventListener('click', async () => {
-  
-        console.log('Exporting Employees...');
-    
-        const emplData = await ipcRenderer.invoke('app:findEmployeesStatistic')
-        console.log(emplData);
-    
-        const tableEmplExcel = jsonToExcel(emplData)
-    
-        exportFile(tableEmplExcel, null)   
-
+exportEmployeeDataToExcel.addEventListener('click', async () => { 
+    const emplData = await ipcRenderer.invoke('app:findEmployeesStatistic')
+    const tableEmplExcel = jsonToExcel(emplData)
+    exportFile(tableEmplExcel, null)
 })
