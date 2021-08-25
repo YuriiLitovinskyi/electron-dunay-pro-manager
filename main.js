@@ -3,7 +3,7 @@ const Firebird = require('node-firebird');
 const moment = require('moment');
 const { findEmplStat } = require('./queries')
 
-process.env.NODE_ENV = 'dev';
+process.env.NODE_ENV = 'production';
 
 const isDev = process.env.NODE_ENV !== 'production' ? true : false;
 
@@ -16,9 +16,9 @@ let timerDb = 0;
 
 function createMainWindow(){
     mainWindow = new BrowserWindow({
-        title: `Dunay-PRO Statistics ${appVersion}`,  //Dunay-128 Connection Statistics
+        title: `Dunay-PRO Statistics ${appVersion}`,
         width: isDev ? 1000 : 600,
-        height: 600,
+        height: 650,
         icon: './assets/icons/D_512x512.png',
         resizable: isDev ? true : false,
         webPreferences: {
@@ -38,8 +38,8 @@ function createMainWindow(){
 function createAboutWindow(){
     aboutWindow = new BrowserWindow({
         title: 'About this application',
-        width: 420,
-        height: 450,
+        width: 550,
+        height: 550,
         icon: './assets/icons/D_512x512.png',
         resizable: false,
         alwaysOnTop: true    

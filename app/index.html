@@ -41,27 +41,39 @@
         
         <div id="ppkDataWindow">
             <p>Disconnecting from DB in: <span id="disconnectionTimerSpan"></span> seconds</p>
-            <button id="disconnectFromDb"><i class="fas fa-database"></i> Disconnect from Database</button>   
-            <form class="select-date-form" id="apply-dates-form">
-                <div class="form-conn-data">
-                    <label for="beginDate">Select begin date</label>
-                    <input type="datetime-local" id="beginDate" required>
-                </div>
-                <div class="form-conn-data">
-                    <label for="endDate">Select end date</label>
-                    <input type="datetime-local" id="endDate" required>
-                </div>              
-                <button id="applyDatesBtn"><i class="far fa-calendar-alt"></i> Apply</button>
-            </form>
-            <div class="result">
-                <p>Devices found: <span id="dun128Amount"></span></p>
+            <button id="disconnectFromDb"><i class="fas fa-database"></i> Disconnect from Database</button>
+            <hr />
+            
+            <div class="paginationContainer">
+                <div class="dunConnStat">Show Dun128 Conn Stat</div>
+                <div class="emplStat">Show Employees Stat</div>               
             </div>
-            <h3>Detailed Info</h3>      
-            <button id="exportDataToExcel"><i class="far fa-file-excel"></i> Export to Excel</button>
+
+            <div id="dun128ConnStat">
+                <h3>Dunay-128 Connection Statistics</h3>
+                <form class="select-date-form" id="apply-dates-form">
+                    <div class="form-conn-data">
+                        <label for="beginDate">Select begin date</label>
+                        <input type="datetime-local" id="beginDate" required>
+                    </div>
+                    <div class="form-conn-data">
+                        <label for="endDate">Select end date</label>
+                        <input type="datetime-local" id="endDate" required>
+                    </div>              
+                    <button id="applyDatesBtn"><i class="far fa-calendar-alt"></i> Apply</button>
+                </form>
+                <div class="result">
+                    <p>Devices found: <span id="dun128Amount"></span></p>
+                </div>
+                <h3>Detailed Info</h3>      
+                <button id="exportDataToExcel"><i class="far fa-file-excel"></i> Export to Excel</button>
+            </div>
 
 
-            <h3>Statistics on Responsible Employees</h3>
-            <button id="exportEmployeeToExcel"><i class="far fa-file-excel"></i> Export Statistics to Excel</button>
+            <div id="respEmployeesStats">               
+                <h3>Statistics on Responsible Employees</h3>
+                <button id="exportEmployeeToExcel"><i class="far fa-file-excel"></i> Export Statistics to Excel</button>
+            </div>
         </div>
     </div>
     <script src="js/renderer.js"></script>

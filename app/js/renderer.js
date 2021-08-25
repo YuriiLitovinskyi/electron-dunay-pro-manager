@@ -23,19 +23,26 @@ const ppkDataWindow = document.getElementById('ppkDataWindow');
 const disconnectionTimerSpan = document.getElementById('disconnectionTimerSpan');
 
 const exportEmployeeDataToExcel = document.getElementById('exportEmployeeToExcel');
+const dun128ConnStat = document.getElementById('dun128ConnStat')
+const respEmployeesStats = document.getElementById('respEmployeesStats')
+const dunConnStat = document.querySelector('.dunConnStat')
+const emplStat = document.querySelector('.emplStat')
+
 
 disconnectFromDb.disabled = true;
-ppkDataWindow.style.display = 'none';
+showContent(ppkDataWindow, 'none')
+showContent(dun128ConnStat, 'none')
+showContent(respEmployeesStats, 'none')
 exportDataToExcel.disabled = true;
 beginDate.value = setInputDate(1);
 endDate.value = setInputDate();
 
 let data = [];
-//let emplData = [];
 let disconnectionTimer = 0;
 let timer;
 let timeleft = 0;
 let timerInterf = 0;
+
 
 ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {   
     data = [...resultPpkData];
@@ -45,6 +52,10 @@ ipcRenderer.on('app:resultPpkData', (e, resultPpkData) => {
         exportDataToExcel.disabled = false;
     };
 });
+
+function showContent(selector, cssParam){
+    selector.style.display = cssParam    
+}
 
 function setInputDate(month = 0){
     const now = new Date();
@@ -92,8 +103,8 @@ connectDbForm.addEventListener('submit', (e) => {
         if(data.connection === 'OK'){
             connectionButton.disabled = true;
             disconnectFromDb.disabled = false;
-            connectionWindow.style.display = 'none';
-            ppkDataWindow.style.display = 'block';
+            connectionWindow.style.display = 'none';          
+            showContent(ppkDataWindow, 'block')
 
             if(timer){
                 clearInterval(timer);
@@ -112,9 +123,9 @@ connectDbForm.addEventListener('submit', (e) => {
         
             timerInterf = setTimeout(() => {
                 connectionButton.disabled = false;
-                disconnectFromDb.disabled = true;
-                connectionWindow.style.display = 'block';
-                ppkDataWindow.style.display = 'none';
+                disconnectFromDb.disabled = true;              
+                showContent(connectionWindow, 'block')
+                showContent(ppkDataWindow, 'none')
                 dun128Amount.innerText = '';
                 data = [];
                 exportDataToExcel.disabled = true;
@@ -127,12 +138,14 @@ disconnectFromDb.addEventListener('click', () => {
     ipcRenderer.send('app:disconnectFromDb');
 
     disconnectFromDb.disabled = true;
-    connectionButton.disabled = false;
-    connectionWindow.style.display = 'block';
-    ppkDataWindow.style.display = 'none';
+    connectionButton.disabled = false;    
+    showContent(connectionWindow, 'block')
+    showContent(ppkDataWindow, 'none')
     dun128Amount.innerText = '';
     data = [];
     exportDataToExcel.disabled = true;
+    showContent(dun128ConnStat, 'none')
+    showContent(respEmployeesStats, 'none')
 
     clearInterval(timer);
     clearTimeout(timerInterf);
@@ -166,8 +179,24 @@ exportDataToExcel.addEventListener('click', () => {
     };
 });
 
-exportEmployeeDataToExcel.addEventListener('click', async () => { 
+exportEmployeeDataToExcel.addEventListener('click', async () => {   
+    exportEmployeeDataToExcel.innerHTML = 'Loading...'
     const emplData = await ipcRenderer.invoke('app:findEmployeesStatistic')
     const tableEmplExcel = jsonToExcel(emplData)
     exportFile(tableEmplExcel, null)
+    exportEmployeeDataToExcel.innerHTML = 'Export Statistics to Excel'
+})
+
+dunConnStat.addEventListener('click', (e) => { 
+    dunConnStat.style.background = '#3498db' 
+    emplStat.style.background = 'rgb(175, 175, 175)'   
+    showContent(dun128ConnStat, 'block')
+    showContent(respEmployeesStats, 'none')
+})
+
+emplStat.addEventListener('click', (e) => {  
+    emplStat.style.background = '#3498db' 
+    dunConnStat.style.background = 'rgb(175, 175, 175)' 
+    showContent(dun128ConnStat, 'none')
+    showContent(respEmployeesStats, 'block')
 })

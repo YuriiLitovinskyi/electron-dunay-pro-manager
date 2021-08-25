@@ -24,6 +24,24 @@ body {
     min-width: 150px !important;
 } */
 
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.dunConnStat, .emplStat {
+    background-color: rgb(175, 175, 175);    
+    margin: 3px;
+    padding: 3px;
+    border-radius: 4px;
+}
+
+.dunConnStat:hover, .emplStat:hover {
+    cursor: pointer;
+    color: #fff;
+    background-color: rgb(92, 91, 91);
+}
+
 h2 {
     text-align: center;
     margin: 10px 0;
@@ -66,7 +84,7 @@ input, select, button{
 }
 
 .select-date-form {
-    margin-top: 40px;
+    margin-top: 15px;
 }
 
 button {
@@ -79,7 +97,7 @@ button {
     font-size: 16px;
     padding: 8px;
     width: 100%; 
-    margin: 10px 0;
+    margin: 5px 0;
 }
 
 button:disabled,
