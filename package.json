@@ -1,13 +1,13 @@
 {
   "name": "dunay128-statistics",
-  "productName": "Dunay128-connection-statistics",
+  "productName": "Dunay-PRO-statistics",
   "version": "1.0.0",
   "description": "Application to get info from Dunay-PRO Firebird DB when devices Dunay-128 restarted for the first time",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dev": "nodemon --exec electron .",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/icon.ico --asar --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"dunay128-connection-statistics\""
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/icon.ico --asar --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"dunay-pro-statistics\""
   },
   "author": "Yurii Litovinskyi",
   "license": "ISC",
